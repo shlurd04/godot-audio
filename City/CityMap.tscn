@@ -1,0 +1,213 @@
+[gd_scene load_steps=19 format=3 uid="uid://crvwglv0qgjy0"]
+
+[ext_resource type="PackedScene" uid="uid://bq4lbuf3phs6p" path="res://City/Models/ground.glb" id="1_nacng"]
+[ext_resource type="PackedScene" uid="uid://dg560ywk6p4lv" path="res://City/Models/bank.glb" id="2_3nrjy"]
+[ext_resource type="PackedScene" uid="uid://bj403ydfcovj7" path="res://City/Models/store.glb" id="3_8lacy"]
+[ext_resource type="PackedScene" uid="uid://dnpoasnpl7swp" path="res://City/Models/restaurant.glb" id="4_ck1fj"]
+[ext_resource type="PackedScene" uid="uid://dx2a5gqnq6byg" path="res://City/Models/pharmacy.glb" id="5_6e70l"]
+[ext_resource type="PackedScene" uid="uid://dagb0ndu82erx" path="res://City/Models/bar.glb" id="6_tbgy7"]
+[ext_resource type="PackedScene" uid="uid://cf1pwgl0y0mi6" path="res://Player Controller/Player.tscn" id="7_qh6ab"]
+[ext_resource type="AudioStream" uid="uid://c23ls77ap1eb8" path="res://Audio/Sound Effects/StreetAmbience (2).ogg" id="8_pv3rs"]
+[ext_resource type="PackedScene" uid="uid://dwt2me8jiwhde" path="res://City/Models/taxi.glb" id="9_1xvim"]
+[ext_resource type="Script" path="res://taxi.gd" id="9_i4sww"]
+[ext_resource type="AudioStream" uid="uid://cv0q3i16m4gyq" path="res://Audio/Sound Effects/Car_Engine_Loop.ogg" id="10_sc11j"]
+[ext_resource type="AudioStream" uid="uid://bxel47geti0y8" path="res://Audio/Music/Alexander Ehlers - Twists.mp3" id="12_tbrip"]
+[ext_resource type="Script" path="res://City/audiomanager.gd" id="13_efi04"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pjne6"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_82pss"]
+sky_material = SubResource("ProceduralSkyMaterial_pjne6")
+
+[sub_resource type="Environment" id="Environment_nt5a8"]
+background_mode = 2
+sky = SubResource("Sky_82pss")
+tonemap_mode = 2
+ssr_enabled = true
+ssao_enabled = true
+ssao_intensity = 7.73
+ssao_detail = 1.0
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_bounce_feedback = 1.0
+sdfgi_energy = 0.2
+glow_enabled = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_amd0x"]
+size = Vector3(78.4482, 1, 93.9922)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ekmry"]
+size = Vector3(8.45981, 2.84436, 6.69342)
+
+[node name="CityMap" type="StaticBody3D"]
+
+[node name="Enviroment" type="Node" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Enviroment"]
+environment = SubResource("Environment_nt5a8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Enviroment"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="ground2" parent="Enviroment" instance=ExtResource("1_nacng")]
+
+[node name="bank2" parent="Enviroment" instance=ExtResource("2_3nrjy")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -9.55621, 0.1, -8.78519)
+
+[node name="store2" parent="Enviroment" instance=ExtResource("3_8lacy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.43171, 0.1, -20.8166)
+
+[node name="restaurant2" parent="Enviroment" instance=ExtResource("4_ck1fj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2468, 0.1, -9.16195)
+
+[node name="pharmacy2" parent="Enviroment" instance=ExtResource("5_6e70l")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 8.65743, 0.1, 8.5929)
+
+[node name="bar2" parent="Enviroment" instance=ExtResource("6_tbgy7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.21561, 0.1, 8.72187)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0318146, -0.4, -15.8933)
+shape = SubResource("BoxShape3D_amd0x")
+
+[node name="Taxi" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.809202, 0.780735, -23.9267)
+script = ExtResource("9_i4sww")
+
+[node name="taxi2" parent="Taxi" instance=ExtResource("9_1xvim")]
+
+[node name="engine" type="AudioStreamPlayer3D" parent="Taxi"]
+stream = ExtResource("10_sc11j")
+volume_db = -20.0
+autoplay = true
+max_distance = 50.0
+bus = &"SFX"
+doppler_tracking = 1
+
+[node name="music" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("12_tbrip")
+volume_db = -35.0
+autoplay = true
+bus = &"Music"
+
+[node name="ambience" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("8_pv3rs")
+volume_db = -35.0
+autoplay = true
+bus = &"Ambience"
+
+[node name="Player" parent="." instance=ExtResource("7_qh6ab")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.110396, 0.1, 0.0809307)
+
+[node name="ReverbZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.45946, 0.485517, 0)
+reverb_bus_enabled = true
+reverb_bus_name = &"SFX Reverb"
+reverb_bus_amount = 0.35
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ReverbZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0728912, 0.92218, 0.438568)
+shape = SubResource("BoxShape3D_ekmry")
+
+[node name="AudioManager" type="Node" parent="."]
+script = ExtResource("13_efi04")
+
+[node name="AudioWindow" type="Panel" parent="AudioManager"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Master" type="Label" parent="AudioManager/AudioWindow"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -125.0
+offset_top = 52.0
+offset_right = 127.0
+offset_bottom = 75.0
+grow_horizontal = 2
+text = "Master Volume
+"
+horizontal_alignment = 1
+
+[node name="MasterSlider" type="HSlider" parent="AudioManager/AudioWindow"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -99.0
+offset_top = 83.0
+offset_right = 102.0
+offset_bottom = 107.0
+grow_horizontal = 2
+max_value = 1.0
+step = 0.0
+value = 1.0
+
+[node name="Music" type="Label" parent="AudioManager/AudioWindow"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -127.0
+offset_top = 132.0
+offset_right = 125.0
+offset_bottom = 155.0
+grow_horizontal = 2
+text = "Music Volume
+"
+horizontal_alignment = 1
+
+[node name="Music Slider" type="HSlider" parent="AudioManager/AudioWindow"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -101.0
+offset_top = 163.0
+offset_right = 100.0
+offset_bottom = 187.0
+grow_horizontal = 2
+max_value = 1.0
+step = 0.0
+value = 1.0
+
+[node name="SFX" type="Label" parent="AudioManager/AudioWindow"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_top = 219.0
+offset_right = 124.0
+offset_bottom = 242.0
+grow_horizontal = 2
+text = "SFX Volume
+"
+horizontal_alignment = 1
+
+[node name="SFX Slider" type="HSlider" parent="AudioManager/AudioWindow"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -102.0
+offset_top = 250.0
+offset_right = 99.0
+offset_bottom = 274.0
+grow_horizontal = 2
+max_value = 1.0
+step = 0.0
+value = 1.0
+
+[connection signal="value_changed" from="AudioManager/AudioWindow/MasterSlider" to="AudioManager" method="_on_master_slider_value_changed"]
+[connection signal="value_changed" from="AudioManager/AudioWindow/Music Slider" to="AudioManager" method="_on_music_slider_value_changed"]
+[connection signal="value_changed" from="AudioManager/AudioWindow/SFX Slider" to="AudioManager" method="_on_sfx_slider_value_changed"]
